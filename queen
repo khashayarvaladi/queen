@@ -1,0 +1,66 @@
+correctness = False
+while not correctness:
+    size = input("Enter platform size: ")
+    if size.isdigit():
+        size = int(size)
+        correctness = True
+    else:
+        print("Please enter a correct number.")
+queen = "♕ "
+emptySquareWhite = "□ "
+emptySquareBlack = "■ "
+queensLocations = [-1] * size
+solutions = 0
+
+
+def makeCanvas() -> str:
+    global emptySquareWhite, emptySquareBlack, queen, queensLocations, size
+    myCanvas = ""
+    for row in range(size):
+        myCanvas += "\n"
+        for column in range(size):
+            if queensLocations[row] == column:
+                myCanvas += queen
+            else:
+                myCanvas += (
+                    emptySquareWhite if (row + column) % 2 == 0 else emptySquareBlack
+                )
+    return myCanvas
+
+
+def checkPlace(targetRow: int, column: int):
+    global queensLocations
+    for i in range(targetRow):
+        if (
+            queensLocations[i] == column
+            or queensLocations[i] - i == column - targetRow
+            or queensLocations[i] + i == column + targetRow
+        ):
+
+            return False
+    return True
+
+
+def putQueen(targetRow: int) -> None:
+    global queensLocations, size, solutions
+    if targetRow == size:
+        canvas = makeCanvas()
+        print(canvas)
+        solutions += 1
+    else:
+        for column in range(size):
+            if checkPlace(targetRow, column):
+                queensLocations[targetRow] = column
+                putQueen(targetRow + 1)
+
+
+def initialize() -> None:
+    global solutions
+    putQueen(0)
+
+    print(
+        "Found", solutions, "solutions on a", str(size) + "x" + str(size), "platform."
+    )
+
+
+initialize()
